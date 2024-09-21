@@ -2,7 +2,6 @@ import datetime
 
 equipe = {}
 
-
 def obter_data(mensagem):
     while True:
         data = input(mensagem).strip()
@@ -12,7 +11,6 @@ def obter_data(mensagem):
         except ValueError:
             print("Data inválida. Por favor, escolha o formato DD/MM/AAAA")
 
-
 def obter_hora(mensagem):
     while True:
         hora = input(mensagem).strip()
@@ -21,7 +19,6 @@ def obter_hora(mensagem):
             return hora
         except ValueError:
             print("Hora inválida. Por favor, escolha o formato HH:MM")
-
 
 def adicionar_missao(missoes):
     while True:
@@ -38,9 +35,8 @@ def adicionar_missao(missoes):
         tempo_inicio = f"{data_inicio} {hora_inicio}"
         tempo_fim = f"{data_fim} {hora_final}"
 
-        print(f"Missão: {nome_missao}")
-        print(f"Data e hora de início: {tempo_inicio}")
-        print(f"Data e hora de fim: {tempo_fim}")
+        data_hora_inicio = datetime.datetime.strptime(tempo_inicio, "%d/%m/%Y %H:%M")
+        data_hora_fim = datetime.datetime.strptime(tempo_fim, "%d/%m/%Y %H:%M")
 
         for i in range(5):
             while True:
@@ -56,15 +52,27 @@ def adicionar_missao(missoes):
                 except ValueError:
                     print("Erro ao processar a entrada. Tente novamente.")
 
-        missoes[nome_missao] = {
-            "inicio": tempo_inicio,
-            "fim": tempo_fim,
+        missoes.append({
+            "nome": nome_missao,
+            "data_hora_inicio": data_hora_inicio,
+            "data_hora_fim": data_hora_fim,
             "equipe": equipe.copy()
-        }
+        })
         print(f"Missão {nome_missao} adicionada com sucesso!")
         break
 
+def verificar_status(missao):
+    agora = datetime.datetime.now()
 
-missoes = {}
-adicionar_missao(missoes)
-print(missoes)
+    inicio = missao["data_hora_inicio"]
+    fim = missao["data_hora_fim"]
+
+    if agora < inicio:
+        if (inicio - agora).total_seconds() <= 3600:
+            print(f"A missão '{missao['nome']}' está prestes a iniciar.")
+        else:
+            print(f"A missão '{missao['nome']}' ainda vai iniciar.")
+    elif inicio <= agora <= fim:
+        print(f"A missão '{missao['nome']}' está em andamento.")
+    else:
+        print(f"A missão '{missao['nome']}' já foi concluída.")

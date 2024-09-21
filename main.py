@@ -1,4 +1,4 @@
-import funcoes  # Importando o módulo funcoes.py do mesmo diretório
+import funcoes
 
 print("Bem-vindo ao módulo de missão")
 
@@ -14,7 +14,12 @@ def main():
 
     while True:
         menu_principal()
-        escolher_opcao = int(input("Escolha uma opção: "))
+
+        try:
+            escolher_opcao = int(input("Escolha uma opção: "))
+        except ValueError:
+            print("Por favor, insira um número válido.")
+            continue
 
         match escolher_opcao:
             case 1:
@@ -23,21 +28,27 @@ def main():
                 if missoes:
                     for i, missao in enumerate(missoes):
                         print(f"{i + 1}. {missao['nome']} - Início: {missao['data_hora_inicio']}")
-                    escolha_missao = int(input("Escolha a missão para verificar o status: ")) - 1
-                    funcoes.verificar_inicio_missao(missoes[escolha_missao])
+                    try:
+                        escolha_missao = int(input("Escolha a missão para verificar o status: ")) - 1
+                        if 0 <= escolha_missao < len(missoes):
+                            funcoes.verificar_status(missoes[escolha_missao])
+                        else:
+                            print("Número de missão inválido.")
+                    except ValueError:
+                        print("Opção inválida. Por favor, insira um número.")
                 else:
                     print("Não há missões cadastradas.")
             case 3:
                 if missoes:
                     for missao in missoes:
-                        print(f"Missão: {missao['nome']} - Início: {missao['data_hora_inicio']} - Fim: {missao['data_fim']}")
+                        print(f"Missão: {missao['nome']} - Início: {missao['data_hora_inicio']} - Fim: {missao['data_hora_fim']}")
                 else:
                     print("Não há missões cadastradas.")
             case 4:
                 print("Encerrando o programa...")
                 break
             case _:
-                print("Opção inválida. Por favor, tente novamente.")
+                print("Opção inválida. Por favor, escolha uma opção de 1 a 4.")
 
 if __name__ == "__main__":
     main()
